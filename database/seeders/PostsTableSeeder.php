@@ -20,12 +20,12 @@ class PostsTableSeeder extends Seeder
         $faker = Factory::create();
 
         for ($i = 0; $i < 10; $i++) {
-            $title = $faker->title;
+            $title = $faker->sentence(3);
             Post::create([
                 'user_id' => rand(1, 10),
                 'category_id' => rand(1, 4),
                 'title' => $title,
-                'slug' => str_replace(' ', '-', $title),
+                'slug' => str_replace(' ', '-', strtolower($title)),
                 'description' => $faker->text(100)
             ]);
         }

@@ -20,10 +20,10 @@ class CategoriesTableSeeder extends Seeder
         $faker = Factory::create();
 
         for ($i = 0; $i < 10; $i++) {
-            $title = $faker->title;
+            $title = $faker->sentence(3);
             Category::create([
                 'name' => $title,
-                'slug' => str_replace(' ', '-', $title)
+                'slug' => str_replace(' ', '-', strtolower($title))
             ]);
         }
     }
