@@ -21,13 +21,23 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index()
     {
-        return $this->user
-            ->posts()
-            ->get();
+        if ($this->user->is_admin) {
+            $posts = Post::all();
+            return \response()->json([
+                "success" => true,
+                "posts" => $posts
+            ]);
+        } else {
+            $posts = $this->user->posts()->get();
+            return \response()->json([
+                "success" => true,
+                "posts" => $posts
+            ]);
+        }
     }
 
     /**
@@ -39,10 +49,10 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //Validate data
-        $data = $request->only('title', 'category', 'description');
+        $data = $request->only('title', 'category_id', 'description');
         $validator = Validator::make($data, [
-            'title' => 'required|string',
-            'category' => 'required',
+            'title' => 'required|string|unique:posts',
+            'category_id' => 'required',
             'description' => 'required'
         ]);
 
@@ -87,6 +97,26 @@ class PostController extends Controller
         }
 
         return $post;
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function comments($id)
+    {
+        $post = $this->user->posts()->find($id);
+
+        if (!$post) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, post not found.'
+            ], 400);
+        }
+
+        return $post->comments;
     }
 
 
@@ -136,11 +166,23 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
+        if ($post->user_id == $this->user->id) {
+            $post->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'post deleted successfully'
-        ], Response::HTTP_OK);
+            return response()->json([
+                'success' => true,
+                'message' => 'post deleted successfully'
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied!'
+            ], 403);
+        }
+    }
+
+    public function get_tags($id)
+    {
+        return Post::findOrFail($id)->tags;
     }
 }

@@ -13,4 +13,9 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function Tags()
+    {
+        return $this->morphToMany(Tag::class,'taggable');
+    }
 }
