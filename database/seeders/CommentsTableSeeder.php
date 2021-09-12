@@ -15,7 +15,7 @@ class CommentsTableSeeder extends Seeder
      */
     public function run()
     {
-        Comment::trunicate();
+        Comment::truncate();
 
         $faker = Factory::create();
 

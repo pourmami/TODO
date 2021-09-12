@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
     {
         $password = Hash::make('123');
 
-        User::trunicate();
+        User::truncate();
 
         User::create([
             'first_name' => "Mohammad",
